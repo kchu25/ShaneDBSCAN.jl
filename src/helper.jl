@@ -1,3 +1,5 @@
+# TODO use R*-tree to speed up the range query
+
 function RangeQuery(DB, distFunc, query_ind, eps)
     neighbors = Set{Int}()
     query_pt = @view DB[query_ind,:]

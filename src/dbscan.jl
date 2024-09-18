@@ -43,7 +43,6 @@ function return_cluster_centers_and_weights(DB, labels)
     # sort the unique labels from small to large
     labels_uniq_sorted = sort!(unique(labels))
     cluster_means = zeros(eltype(DB), length(labels_uniq_sorted), size(DB, 2))
-    weights
     for (ind, label) in enumerate(labels_uniq_sorted)
         mean_here = (@view DB[labels .== label,:]) |> mean 
         cluster_means[ind,:] .= Int.(ceil.(mean_here))
@@ -51,4 +50,9 @@ function return_cluster_centers_and_weights(DB, labels)
     counts_each = [sum(labels .== i) for i in labels_uniq_sorted] 
     weights = counts_each ./ sum(counts_each)    
     return weights, cluster_means
+end
+
+function return_cluster_centers_and_weights(DB)
+    labels = DBSCAN(DB)
+    return return_cluster_centers_and_weights(DB, labels)
 end

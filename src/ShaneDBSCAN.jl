@@ -6,7 +6,7 @@ include("dist.jl")
 include("helper.jl")
 include("dbscan.jl")
 
-
+export return_cluster_centers_and_weights
 
 
 end
