@@ -1,0 +1,1 @@
+euc_dist(p1, p2) = sqrt(sum((p1-p2).^2))
