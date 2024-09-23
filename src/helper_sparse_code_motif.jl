@@ -13,7 +13,7 @@ function get_distance_mat(modes_here)
     return distance_mat
 end
 
-function get_weights_and_distance_mat(modes_here)
+function get_weights_and_distance_mat(modes_here; eps=10)
     weights, distance_mat = nothing, nothing
     if length(modes_here) ≤ max_cluster_num
         counts_each = Vector{Int}(undef, length(modes_here))
@@ -25,7 +25,7 @@ function get_weights_and_distance_mat(modes_here)
     else
         # do clustering
         all_distance_mats = get_distance_mat(modes_here)
-        weights, distance_mat = return_cluster_centers_and_weights(all_distance_mats)
+        weights, distance_mat = return_cluster_centers_and_weights(all_distance_mats; eps=eps)
     end
     return weights, distance_mat
 end

@@ -6,7 +6,7 @@ DB: A n x p data matrix where p is the
     return labels: A vector of length n where each element
         is a cluster number or -1 if the point is noise
 """
-function DBSCAN(DB, ;distFunc=euc_dist, eps=8, minPts=3)
+function DBSCAN(DB, ;distFunc=euc_dist, eps=10, minPts=3)
     C = 0           # cluster counter
     N = size(DB, 1) # 
     labels = zeros(Int, N) # labels: 0 - unclassified, -1 - noise, 1, 2, ... - cluster number
@@ -52,7 +52,7 @@ function return_cluster_centers_and_weights(DB, labels)
     return weights, cluster_means
 end
 
-function return_cluster_centers_and_weights(DB)
-    labels = DBSCAN(DB)
+function return_cluster_centers_and_weights(DB; eps=10)
+    labels = DBSCAN(DB; eps=eps)
     return return_cluster_centers_and_weights(DB, labels)
 end
