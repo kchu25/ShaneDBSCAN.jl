@@ -15,17 +15,22 @@ end
 
 function get_weights_and_distance_mat(modes_here; eps=10)
     weights, distance_mat = nothing, nothing
+    
+    # because there are duplicates, 
+    # we need to count the number of instances of each mode
+    counts_each = Vector{Int}(undef, length(modes_here))
+    for (ind,_key_) in enumerate(keys(modes_here))
+        counts_each[ind] = Int(sum(@view modes_here[_key_][:, 1]))
+    end
+    
     if length(modes_here) ≤ max_cluster_num
-        counts_each = Vector{Int}(undef, length(modes_here))
-        for (ind,_key_) in enumerate(keys(modes_here))
-            counts_each[ind] = Int(sum(@view modes_here[_key_][:, 1]))
-        end
-        weights = counts_each ./ sum(counts_each)
+        weights = counts_each ./ sum(counts_each) 
         distance_mat = get_distance_mat(modes_here)
     else
         # do clustering
         all_distance_mats = get_distance_mat(modes_here)
-        weights, distance_mat = return_cluster_centers_and_weights(all_distance_mats; eps=eps)
+        weights, distance_mat = 
+            return_cluster_centers_and_weights(all_distance_mats; counts_each=counts_each, eps=eps)
     end
     return weights, distance_mat
 end

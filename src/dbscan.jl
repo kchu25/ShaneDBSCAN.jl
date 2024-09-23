@@ -39,20 +39,26 @@ end
 """
 return the weights and cluster centers
 """
-function return_cluster_centers_and_weights(DB, labels)
+function return_cluster_centers_and_weights(DB, counts_each, labels; digits=2)
     # sort the unique labels from small to large
     labels_uniq_sorted = sort!(unique(labels))
     cluster_means = zeros(eltype(DB), length(labels_uniq_sorted), size(DB, 2))
+    total_counts_each = zeros(Int, length(labels_uniq_sorted))
     for (ind, label) in enumerate(labels_uniq_sorted)
-        mean_here = (@view DB[labels .== label,:]) |> mean 
+        # construct weighted mean
+        DB_entries_here = @view DB[labels .== label,:]
+        counts_entries_here = @view counts_each[labels .== label]
+        mean_here = sum(counts_entries_here .* DB_entries_here) / sum(counts_entries_here)
         cluster_means[ind,:] .= Int.(round.(mean_here, digits=0))
+        # record the total counts for this cluster
+        total_counts_each[ind] = sum(counts_entries_here)
     end
-    counts_each = [sum(labels .== i) for i in labels_uniq_sorted] 
-    weights = counts_each ./ sum(counts_each)    
+    weights = round.(total_counts_each ./ sum(total_counts_each), digits=digits)
     return weights, cluster_means
 end
 
-function return_cluster_centers_and_weights(DB; eps=10)
+function return_cluster_centers_and_weights(DB; counts_each=nothing, eps=10)
+    isnothing(counts_each) && (counts_each = ones(eltype(DB), (size(DB, 1),)))
     labels = DBSCAN(DB; eps=eps)
-    return return_cluster_centers_and_weights(DB, labels)
+    return return_cluster_centers_and_weights(DB, counts_each, labels)
 end
