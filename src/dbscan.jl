@@ -35,11 +35,10 @@ function DBSCAN(DB, ;distFunc=euc_dist, eps=10, minPts=3)
     return labels
 end
 
-
 """
 return the weights and cluster centers
 """
-function return_cluster_centers_and_weights(DB, counts_each, labels; digits=2)
+function return_cluster_centers_and_weights(DB, counts_each, labels; digits=2, weight_cut_off=0.05)
     # sort the unique labels from small to large
     labels_uniq_sorted = sort!(unique(labels))
     cluster_means = zeros(eltype(DB), length(labels_uniq_sorted), size(DB, 2))
@@ -54,6 +53,12 @@ function return_cluster_centers_and_weights(DB, counts_each, labels; digits=2)
         total_counts_each[ind] = sum(counts_entries_here)
     end
     weights = round.(total_counts_each ./ sum(total_counts_each), digits=digits)
+
+    # remove clusters with weights below the cut off
+    selected2display = weights .> weight_cut_off
+    weights = @view weights[selected2display]
+    weights = weights ./ sum(weights)
+    cluster_means = @view cluster_means[selected2display,:]
     return weights, cluster_means
 end
 
