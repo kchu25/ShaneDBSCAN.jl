@@ -45,7 +45,7 @@ function return_cluster_centers_and_weights(DB, labels)
     cluster_means = zeros(eltype(DB), length(labels_uniq_sorted), size(DB, 2))
     for (ind, label) in enumerate(labels_uniq_sorted)
         mean_here = (@view DB[labels .== label,:]) |> mean 
-        cluster_means[ind,:] .= Int.(ceil.(mean_here))
+        cluster_means[ind,:] .= Int.(round.(mean_here, digits=0))
     end
     counts_each = [sum(labels .== i) for i in labels_uniq_sorted] 
     weights = counts_each ./ sum(counts_each)    
