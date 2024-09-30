@@ -15,7 +15,7 @@ using ShaneDBSCAN
 
 labels = DBSCAN(DB, ;distFunc=euc_dist, eps=10, minPts=3)
 ```
-The labels $\in \Set{-1,0,1,2,3,4,...}$ are cluster indices. Specifically, 
+The labels $\in \Set{-1,0,1,2,3,...}$ are cluster indices. Specifically, 
 * `0` means unclassified,
 * `-1` means noise
 * `1, 2, 3, ...` means cluster number `1,2,3,...`
